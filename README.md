@@ -68,8 +68,11 @@ When logged in, users can view multiple graph options:
 - 🥧 Payment Status (Pie Chart)
 
 ---
+
 ### 🖼️ Screenshots
 <p align="center"> <img src="screenshots/graph_trend.png" width="400"/> <img src="screenshots/graph_bar.png" width="400"/> <img src="screenshots/graph_pie.png" width="400"/> </p>
+
+---
 
 ### 🛠️ Tech Stack
 
@@ -86,6 +89,8 @@ When logged in, users can view multiple graph options:
 
 ### 🤝 Contributing
 Pull requests are welcome! For major changes, please open an issue first to discuss.
+
+---
 
 ### 📜 License
 This project is licensed under the MIT License.
