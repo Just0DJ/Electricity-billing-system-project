@@ -68,9 +68,11 @@ When logged in, users can view multiple graph options:
 - 🥧 Payment Status (Pie Chart)
 
 ---
-
+### 🖼️ Screenshots
 <p align="center"> <img src="screenshots/graph_trend.png" width="400"/> <img src="screenshots/graph_bar.png" width="400"/> <img src="screenshots/graph_pie.png" width="400"/> </p>
+
 ### 🛠️ Tech Stack
+
 <p align="left"> <img src="https://skillicons.dev/icons?i=python,mysql,git" height="40" /> </p>
 
 ---
