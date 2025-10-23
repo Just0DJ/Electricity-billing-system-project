@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}Electricity Billing System - Customer Details{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="ascii-box">
+            <div class="ascii-box-header">
+                <h3 class="text-center">CUSTOMER DETAILS</h3>
+            </div>
+            <div class="ascii-box-body">
+                <!-- Navigation breadcrumbs -->
+                <div class="breadcrumbs mb-3">
+                    <a href="{{ url_for('dashboard') }}">Dashboard</a> &gt; Customer Details
+                </div>
+
+                <form method="POST" action="{{ url_for('view_customer_details') }}" class="mb-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="account_no" class="form-label">Account Number:</label>
+                            <input type="number" class="form-control search-input" id="account_no" name="account_no" 
+                                placeholder="Enter Account Number" aria-label="Account Number">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-flex">
+                                <button type="submit" class="btn btn-search me-2">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                                <a href="{{ url_for('view_customer_details') }}" class="btn btn-view-all">
+                                    <i class="fas fa-list"></i> View All
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Loading indicator (hidden by default) -->
+                <div id="loading-indicator" class="text-center mb-3" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                
+                {% if customers %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="ascii-box-inner">
+                                <h4 class="ascii-box-title">CUSTOMER INFORMATION</h4>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Account No</th>
+                                                <th>Bank Name</th>
+                                                <th>Name</th>
+                                                <th>Address</th>
+                                                <th>Contact</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for customer in customers %}
+                                            <tr>
+                                                <td>{{ customer.Accountno }}</td>
+                                                <td>{{ customer.Bankname }}</td>
+                                                <td>{{ customer.Name }}</td>
+                                                <td>{{ customer.Address }}</td>
+                                                <td>{{ customer.Contact }}</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-graph" onclick="showGraph('{{ customer.Accountno }}')">
+                                                        <i class="fas fa-chart-line"></i> View Graph
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            {% if transactions %}
+                                <div class="ascii-box-inner">
+                                    <h4 class="ascii-box-title">TRANSACTION HISTORY</h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Units</th>
+                                                    <th>Amount</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for transaction in transactions %}
+                                                <tr>
+                                                    <td>{{ transaction.todays }}</td>
+                                                    <td>{{ transaction.unit }}</td>
+                                                    <td>{{ transaction.amtwithvat }}</td>
+                                                    <td>
+                                                        {% if transaction.paid == 'Yes' %}
+                                                            <span class="badge bg-success">Paid</span>
+                                                        {% else %}
+                                                            <span class="badge bg-danger">Unpaid</span>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="ascii-box-inner" id="graph-container">
+                                <h4 class="ascii-box-title">USAGE GRAPH</h4>
+                                <div id="graph-placeholder" class="text-center py-5">
+                                    <p>Select a customer to view their usage graph</p>
+                                </div>
+                                <div id="graph-content" style="display: none;">
+                                    <!-- Graph will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% elif search_attempted %}
+                    <div class="empty-state">
+                        <div class="ascii-art">
+                            ╔════════════════════════╗
+                            ║       No Results       ║
+                            ║                        ║
+                            ║  ¯\_(ツ)_/¯            ║
+                            ╚════════════════════════╝
+                        </div>
+                        <h4>No customer records found</h4>
+                        <p>This could be due to:</p>
+                        <ul>
+                            <li>Invalid account number</li>
+                            <li>The customer doesn't exist in our system</li>
+                            <li>Database connection issue</li>
+                        </ul>
+                        <p>Please try again with a different account number or use the "View All" button.</p>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="ascii-art">
+                            ╔════════════════════════╗
+                            ║    Search Customers    ║
+                            ║                        ║
+                            ║  Enter account number  ║
+                            ║  or view all records   ║
+                            ╚════════════════════════╝
+                        </div>
+                        <p>Use the search box above to find specific customer records or click "View All" to see all customers.</p>
+                    </div>
+                {% endif %}
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+            <div class="ascii-box-footer"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Show loading indicator when form is submitted
+document.querySelector('form').addEventListener('submit', function() {
+    document.getElementById('loading-indicator').style.display = 'block';
+});
+
+// Show loading indicator when "View All" is clicked
+document.querySelector('.btn-view-all').addEventListener('click', function() {
+    document.getElementById('loading-indicator').style.display = 'block';
+});
+
+// Function to show graph for a specific account
+function showGraph(accountNo) {
+    document.getElementById('graph-placeholder').style.display = 'none';
+    document.getElementById('graph-content').style.display = 'block';
+    document.getElementById('loading-indicator').style.display = 'block';
+    
+    // Load graph content via AJAX
+    fetch('/graph/' + accountNo)
+        .then(response => response.text())
+        .then(data => {
+            // Extract just the graph content from the response
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(data, 'text/html');
+            const graphContent = htmlDoc.querySelector('.graph-container');
+            
+            if (graphContent) {
+                document.getElementById('graph-content').innerHTML = graphContent.outerHTML;
+            } else {
+                document.getElementById('graph-content').innerHTML = '<p class="text-center">No graph data available</p>';
+            }
+            document.getElementById('loading-indicator').style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error loading graph:', error);
+            document.getElementById('graph-content').innerHTML = '<p class="text-center text-danger">Error loading graph</p>';
+            document.getElementById('loading-indicator').style.display = 'none';
+        });
+}
+</script>
+{% endblock %}
